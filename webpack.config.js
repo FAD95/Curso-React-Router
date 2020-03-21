@@ -1,6 +1,7 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtP = require("mini-css-extract-plugin");
+const HtmlWebpackP = require("html-webpack-plugin");
 
 module.exports = env => {
   return {
@@ -69,7 +70,10 @@ module.exports = env => {
       new MiniCssExtP({
         filename: "css/[name].[hash].css",
         chunkFilename: "css/[id].[hash].css"
-      })
+      }),
+      new HtmlWebpackP({
+      template: path.resolve(__dirname, "index.html")
+    }),
     ]
   };
 };
