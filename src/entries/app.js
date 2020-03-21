@@ -42,7 +42,7 @@ const store = createStore(
 const homeContainer = document.getElementById("home-container");
 
 render(
-  <BrowserRouter>
+  <BrowserRouter basename={process.env.PUBLIC_URL}>
     <Provider store={store}>
       <React.Fragment>
         <Header />
