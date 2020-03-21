@@ -1,33 +1,21 @@
-const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const path = require("path");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const MiniCssExtP = require("mini-css-extract-plugin");
 
-
-module.exports = (env) => {
-  const plugins = [
-    new ExtractTextPlugin("css/[name].[hash].css")
-  ]
-
-  if (env.NODE_ENV === 'production') {
-    plugins.push(
-      new CleanWebpackPlugin(['dist'], {root: __dirname})
-    )
-  }
-
+module.exports = env => {
   return {
-
     entry: {
-      "home": path.resolve(__dirname, 'src/entries/home.js'),
-      "redux": path.resolve(__dirname, 'src/entries/redux.js'),
+      app: path.resolve(__dirname, "src/entries/app.js")
+      // "redux": path.resolve(__dirname, 'src/entries/redux.js'),
     },
     output: {
-      path: path.resolve(__dirname, 'dist'),
-      filename: 'js/[name].[hash].js',
-      publicPath: path.resolve(__dirname, 'dist')+"/",
-      chunkFilename: 'js/[id].[chunkhash].js',
+      path: path.resolve(__dirname, "dist"),
+      filename: "js/[name].[hash].js",
+      publicPath: path.resolve(__dirname, "dist") + "/",
+      chunkFilename: "js/[id].[chunkhash].js"
     },
     devServer: {
-      port: 9000,
+      port: 9000
     },
     module: {
       rules: [
@@ -37,38 +25,51 @@ module.exports = (env) => {
           test: /\.(js|jsx)$/,
           exclude: /(node_modules)/,
           use: {
-            loader: 'babel-loader',
+            loader: "babel-loader",
             options: {
-              presets: ['es2015', 'react', 'stage-2'],
+              presets: ["es2015", "react", "stage-2"]
             }
-          },
+          }
         },
         {
           test: /\.css$/,
-          use: ExtractTextPlugin.extract({
-            use: [
-              {
-                loader: 'css-loader',
-                options: {
-                  minimize: true,
-                }
-              }
-            ]
-          })
+          use: [
+            {
+              loader: MiniCssExtP.loader
+            },
+            "css-loader"
+          ]
+        },
+        {
+          test: /\.scss$/,
+          use: [
+            {
+              loader: MiniCssExtP.loader
+            },
+            "css-loader",
+            "sass-loader"
+            
+          ]
         },
         {
           test: /\.(jpg|png|gif|svg)$/,
           use: {
-            loader: 'url-loader',
+            loader: "url-loader",
             options: {
               limit: 10000,
-              fallback: 'file-loader',
-              name: 'images/[name].[hash].[ext]',
+              fallback: "file-loader",
+              name: "images/[name].[hash].[ext]"
             }
           }
-        },
+        }
       ]
     },
-    plugins
-  }
-}
+    plugins: [
+      new CleanWebpackPlugin(),
+      new MiniCssExtP({
+        filename: "css/[name].[hash].css",
+        chunkFilename: "css/[id].[hash].css"
+      })
+    ]
+  };
+};
